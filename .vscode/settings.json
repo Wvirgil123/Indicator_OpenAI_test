@@ -17,6 +17,8 @@
     "idf.toolsPathWin": "D:\\Embedded\\Espressif",
     "files.associations": {
         "terminal_model.h": "c",
-        "random": "cpp"
+        "random": "cpp",
+        "functional": "cpp",
+        "ui_helpers.h": "c"
     }
 }

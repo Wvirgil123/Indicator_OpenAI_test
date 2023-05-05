@@ -98,6 +98,12 @@ void _ui_opacity_set( lv_obj_t *target, int val)
    lv_obj_set_style_opa(target, val, 0);
 }
 
+void _ui_anim_callback_free_user_data(lv_anim_t *a)
+{
+	lv_mem_free(a->user_data);
+	a->user_data=NULL;
+}
+
 void _ui_anim_callback_set_x(lv_anim_t* a, int32_t v)
 {
    lv_obj_set_x((lv_obj_t *)a->user_data, v);
@@ -133,6 +139,14 @@ void _ui_anim_callback_set_image_angle(lv_anim_t* a, int32_t v)
    lv_img_set_angle((lv_obj_t *)a->user_data, v);
 }
 
+void _ui_anim_callback_set_image_frame(lv_anim_t* a, int32_t v)
+{
+    ui_anim_user_data_t *usr = (ui_anim_user_data_t *)a->user_data;
+    usr->val = v;
+    if ( v<0 ) v=0;
+    if ( v>=usr->imgset_size ) v=usr->imgset_size-1;
+    lv_img_set_src(usr->target, usr->imgset[v]);
+}
 
 int32_t _ui_anim_callback_get_x(lv_anim_t* a)
 {

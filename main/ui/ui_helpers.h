@@ -44,6 +44,8 @@ void _ui_bar_increment( lv_obj_t *target, int val, int anm);
 
 void _ui_slider_increment( lv_obj_t *target, int val, int anm);
 
+void _ui_keyboard_set_target( lv_obj_t *keyboard, lv_obj_t *textarea);
+
 #define _UI_MODIFY_FLAG_ADD 0
 #define _UI_MODIFY_FLAG_REMOVE 1
 #define _UI_MODIFY_FLAG_TOGGLE 2
@@ -55,6 +57,15 @@ void _ui_flag_modify( lv_obj_t *target, int32_t flag, int value);
 void _ui_state_modify( lv_obj_t *target, int32_t state, int value);
 
 void _ui_opacity_set( lv_obj_t *target, int val);
+
+/** Describes an animation*/
+typedef struct _ui_anim_user_data_t {
+    lv_obj_t *target;
+    lv_img_dsc_t **imgset;
+    int32_t imgset_size;
+    int32_t val;
+} ui_anim_user_data_t;
+void _ui_anim_callback_free_user_data(lv_anim_t *a);
 
 void _ui_anim_callback_set_x(lv_anim_t* a, int32_t v);
 
@@ -70,6 +81,8 @@ void _ui_anim_callback_set_image_zoom(lv_anim_t* a, int32_t v);
 
 void _ui_anim_callback_set_image_angle(lv_anim_t* a, int32_t v);
 
+void _ui_anim_callback_set_image_frame(lv_anim_t* a, int32_t v);
+
 int32_t _ui_anim_callback_get_x(lv_anim_t* a);
 
 int32_t _ui_anim_callback_get_y(lv_anim_t* a);
@@ -83,6 +96,8 @@ int32_t _ui_anim_callback_get_opacity(lv_anim_t* a);
 int32_t _ui_anim_callback_get_image_zoom(lv_anim_t* a);
 
 int32_t _ui_anim_callback_get_image_angle(lv_anim_t* a);
+
+int32_t _ui_anim_callback_get_image_frame(lv_anim_t* a);
 
 void _ui_arc_set_text_value( lv_obj_t *trg, lv_obj_t *src, char *prefix, char *postfix);
 

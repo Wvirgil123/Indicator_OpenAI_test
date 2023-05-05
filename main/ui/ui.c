@@ -1582,5 +1582,10 @@ ui_screen_date_time_screen_init();
 ui_screen_wifi_screen_init();
 ui_screen_factory_screen_init();
 ui_screen_sensor_chart_screen_init();
+    ui_OpenAI_screen_init();
+    ui_ChatGPT_screen_init();
+    ui_ChatGPT2_screen_init();
+    ui_DALLE1_screen_init();
+    ui_DALLE2_screen_init();
 lv_disp_load_scr( ui_screen_time);
 }

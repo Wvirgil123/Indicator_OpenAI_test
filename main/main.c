@@ -49,7 +49,7 @@ void app_main(void)
 
 
     lv_port_sem_take();
-    terminal_view_init();
+    terminal_view_init(); // init user view
     lv_port_sem_give();
 
     terminal_model_init();
