@@ -19,6 +19,8 @@
         "terminal_model.h": "c",
         "random": "cpp",
         "functional": "cpp",
-        "ui_helpers.h": "c"
-    }
+        "ui_helpers.h": "c",
+        "numbers": "cpp"
+    },
+    "idf.flashType": "UART"
 }

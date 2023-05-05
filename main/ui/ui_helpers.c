@@ -72,6 +72,11 @@ void _ui_slider_increment( lv_obj_t *target, int val, int anm)
    lv_slider_set_value(target, old+val, anm);   
 }
 
+void _ui_keyboard_set_target( lv_obj_t *keyboard, lv_obj_t *textarea) 
+{
+   lv_keyboard_set_textarea(keyboard, textarea);
+}
+
 void _ui_flag_modify( lv_obj_t *target, int32_t flag, int value)
 {
     if (value==_UI_MODIFY_FLAG_TOGGLE)

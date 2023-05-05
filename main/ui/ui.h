@@ -152,6 +152,71 @@ extern lv_obj_t * ui_sensor_chart_week;
 extern lv_chart_series_t * ui_sensor_chart_week_series_hight;
 extern lv_chart_series_t * ui_sensor_chart_week_series_low;
 
+extern lv_obj_t *ui_OpenAI;
+void ui_event_wifi__st_button_4( lv_event_t * e);
+extern lv_obj_t *ui_wifi__st_button_4;
+// extern lv_obj_t *ui_wifi_st_7;
+extern lv_obj_t *ui_log_OpenAI;
+void ui_event_btn_go_chatgpt( lv_event_t * e);
+extern lv_obj_t *ui_btn_go_chatgpt;
+extern lv_obj_t *ui_Label1;
+extern lv_obj_t *ui_btn_set_key;
+extern lv_obj_t *ui_Label4;
+void ui_event_btn_go_dalle( lv_event_t * e);
+extern lv_obj_t *ui_btn_go_dalle;
+extern lv_obj_t *ui_Label3;
+extern lv_obj_t *ui_ChatGPT;
+void ui_event_wifi__st_button_5( lv_event_t * e);
+extern lv_obj_t *ui_wifi__st_button_5;
+extern lv_obj_t *ui_wifi_st_8;
+extern lv_obj_t *ui_btn_generate_answer;
+extern lv_obj_t *ui_Label7;
+void ui_event_back4( lv_event_t * e);
+extern lv_obj_t *ui_back4;
+void ui_event_text_edit_gpt_request( lv_event_t * e);
+extern lv_obj_t *ui_text_edit_gpt_request;
+extern lv_obj_t *ui_Keyboard_chatgpt;
+extern lv_obj_t *ui_ChatGPT2;
+void ui_event_wifi__st_button_7( lv_event_t * e);
+extern lv_obj_t *ui_wifi__st_button_7;
+extern lv_obj_t *ui_wifi_st_10;
+extern lv_obj_t *ui_GenerAnswer1;
+extern lv_obj_t *ui_Label6;
+void ui_event_back6( lv_event_t * e);
+extern lv_obj_t *ui_back6;
+extern lv_obj_t *ui_Label10;
+extern lv_obj_t *ui_logo_request;
+extern lv_obj_t *ui_text_readonly_gpt_request;
+extern lv_obj_t *ui_text_readonly_gpt_response;
+extern lv_obj_t *ui_logo_response;
+extern lv_obj_t *ui_DALLE1;
+void ui_event_wifi__st_button_6( lv_event_t * e);
+extern lv_obj_t *ui_wifi__st_button_6;
+extern lv_obj_t *ui_wifi_st_9;
+extern lv_obj_t *ui_btn_dall_supriseme;
+extern lv_obj_t *ui_Label5;
+void ui_event_btn_back_dalle1( lv_event_t * e);
+extern lv_obj_t *ui_btn_back_dalle1;
+extern lv_obj_t *ui_Label8;
+void ui_event_DELLText( lv_event_t * e);
+extern lv_obj_t *ui_DELLText;
+extern lv_obj_t *ui_Keyboard_dalle;
+extern lv_obj_t *ui_DALLE2;
+void ui_event_wifi__st_button_8( lv_event_t * e);
+extern lv_obj_t *ui_wifi__st_button_8;
+extern lv_obj_t *ui_wifi_st_11;
+extern lv_obj_t *ui_btn_dall2_regenerate;
+extern lv_obj_t *ui_Label9;
+extern lv_obj_t *ui_back7;
+extern lv_obj_t *ui_Label11;
+extern lv_obj_t *ui_Bar2;
+extern lv_obj_t *ui_img_btn_dalle;
+// extern lv_obj_t *ui_screen_wifi;
+// extern lv_obj_t *ui_wifi_st_6;
+// extern lv_obj_t *ui_wifi_title;
+// void ui_event_back3( lv_event_t * e);
+extern lv_obj_t *ui_back3;
+
 LV_IMG_DECLARE( ui_img_wifi_disconet_png);   // assets/wifi_disconet.png
 LV_IMG_DECLARE( ui_img_location_png);   // assets/location.png
 LV_IMG_DECLARE( ui_img_temp_1_png);   // assets/temp_1.png
@@ -169,6 +234,27 @@ LV_IMG_DECLARE( ui_img_high_light_png);   // assets/high_light.png
 LV_IMG_DECLARE( ui_img_low_light_png);   // assets/low_light.png
 LV_IMG_DECLARE( ui_img_background_png);
 LV_IMG_DECLARE( ui_img_location2_png);
+
+// LV_IMG_DECLARE( ui_img_wifi_disconet_png);   // assets\wifi_disconet.png
+LV_IMG_DECLARE( ui_img_openai_png);   // assets\OpenAI.png
+// LV_IMG_DECLARE( ui_img_back_png);   // assets\back.png
+LV_IMG_DECLARE( ui_img_wifi_3_png);   // assets\wifi_3.png
+LV_IMG_DECLARE( ui_img_274874543);   // assets\ic_sensecap@2x.png
+LV_IMG_DECLARE( ui_img_983135800);   // assets\ic_chatgpt@2x.png
+LV_IMG_DECLARE( ui_img_wifi_2_png);   // assets\wifi_2.png
+// LV_IMG_DECLARE( ui_img_background_png);   // assets\background.png
+// LV_IMG_DECLARE( ui_img_co2_png);   // assets\co2.png
+// LV_IMG_DECLARE( ui_img_humidity_1_png);   // assets\humidity_1.png
+// LV_IMG_DECLARE( ui_img_humidity_2_png);   // assets\humidity_2.png
+LV_IMG_DECLARE( ui_img_1630294594);   // assets\ic_bad-1.png
+LV_IMG_DECLARE( ui_img_1630299967);   // assets\ic_bad-2.png
+LV_IMG_DECLARE( ui_img_1251142400);   // assets\ic_good-1.png
+LV_IMG_DECLARE( ui_img_1979224529);   // assets\ic_good-2.png
+LV_IMG_DECLARE( ui_img_ic_openai_logo_1_png);   // assets\ic_OpenAI_Logo 1.png
+// LV_IMG_DECLARE( ui_img_location2_png);   // assets\location2.png
+// LV_IMG_DECLARE( ui_img_temp_1_png);   // assets\temp_1.png
+// LV_IMG_DECLARE( ui_img_temp_2_png);   // assets\temp_2.png
+LV_IMG_DECLARE( ui_img_wifi_1_png);   // assets\wifi_1.png
 
 LV_FONT_DECLARE( ui_font_font0);
 LV_FONT_DECLARE( ui_font_font1);

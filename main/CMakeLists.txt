@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 
 set(UI_DIR ./ui)
 file(GLOB_RECURSE UI_SOURCES ${UI_DIR}/*.c)
-
+# 显示 UI_DIR 变量
+message(STATUS "UI_DIR: ${UI_DIR}")
 set(MODEL_DIR ./model)
 file(GLOB_RECURSE MODEL_SOURCES ${MODEL_DIR}/*.c)
 
