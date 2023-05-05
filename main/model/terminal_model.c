@@ -15,4 +15,5 @@ int terminal_model_init(void)
     terminal_city_init();
     terminal_display_init();  // lcd bl on
     terminal_btn_init();
+    // terminal_openai_init(); // a new task for openai
 }

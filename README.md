@@ -1,77 +1,95 @@
-| Supported Targets | ESP32 | ESP32-C2 | ESP32-C3 | ESP32-S2 | ESP32-S3 |
-| ----------------- | ----- | -------- | -------- | -------- | -------- |
+# Assistant indicator
 
-# Blink Example
+A brief description of the project.
 
-(See the README.md file in the upper level 'examples' directory for more information about examples.)
+## Installation and Usage
 
-This example demonstrates how to blink a LED using GPIO or using the [led_strip](https://components.espressif.com/component/espressif/led_strip) component for the addressable LED, i.e. [WS2812](http://www.world-semi.com/Certifications/WS2812B.html).
+Instructions on how to install and use the project.
 
-The `led_strip` is installed via [component manager](main/idf_component.yml).
+### Installation
 
-## How to Use Example
+If using Windows, you would need those basic tools below:
+git, cmake, make, python3(also pip3), vscode(optional)
 
-Before project configuration and build, be sure to set the correct chip target using `idf.py set-target <chip_name>`.
+#### IDF and IDF-Tools
+using esp-idf tools installer to setup the environment, which helps you install all the compile tools and python packages. You don't need to install them one by one and the git repo.
+- [ESP-IDF Tools Installer](https://dl.espressif.com/dl/esp-idf/), download v5.0 or v5.0.1 version.
+For detailed information, please refer to [Get Started](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/index.html)
+### Usage
 
-### Hardware Required
-
-* A development board with Espressif SoC (e.g., ESP32-DevKitC, ESP-WROVER-KIT, etc.)
-* A USB cable for Power supply and programming
-
-Some development boards use an addressable LED instead of a regular one. These development boards include:
-
-| Board                | LED type             | Pin                  |
-| -------------------- | -------------------- | -------------------- |
-| ESP32-C3-DevKitC-1   | Addressable          | GPIO8                |
-| ESP32-C3-DevKitM-1   | Addressable          | GPIO8                |
-| ESP32-S2-DevKitM-1   | Addressable          | GPIO18               |
-| ESP32-S2-Saola-1     | Addressable          | GPIO18               |
-| ESP32-S3-DevKitC-1   | Addressable          | GPIO48               |
-
-See [Development Boards](https://www.espressif.com/en/products/devkits) for more information about it.
-
-### Configure the Project
-
-Open the project configuration menu (`idf.py menuconfig`).
-
-In the `Example Configuration` menu:
-
-* Select the LED type in the `Blink LED type` option.
-  * Use `GPIO` for regular LED blink.
-* Set the GPIO number used for the signal in the `Blink GPIO number` option.
-* Set the blinking period in the `Blink period in ms` option.
-
-### Build and Flash
-
-Run `idf.py -p PORT flash monitor` to build, flash and monitor the project.
-
-(To exit the serial monitor, type ``Ctrl-]``.)
-
-See the [Getting Started Guide](https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html) for full steps to configure and use ESP-IDF to build projects.
-
-## Example Output
-
-As you run the example, you will see the LED blinking, according to the previously defined period. For the addressable LED, you can also change the LED color by setting the `led_strip_set_pixel(led_strip, 0, 16, 16, 16);` (LED Strip, Pixel Number, Red, Green, Blue) with values from 0 to 255 in the [source file](main/blink_example_main.c).
-
-```text
-I (315) example: Example configured to blink addressable LED!
-I (325) example: Turning the LED OFF!
-I (1325) example: Turning the LED ON!
-I (2325) example: Turning the LED OFF!
-I (3325) example: Turning the LED ON!
-I (4325) example: Turning the LED OFF!
-I (5325) example: Turning the LED ON!
-I (6325) example: Turning the LED OFF!
-I (7325) example: Turning the LED ON!
-I (8325) example: Turning the LED OFF!
+####  Projection structure
+the component is from Seeed Studio company, which is from the repo [SenseCAP_Indicator_ESP32](https://github.com/Seeed-Solution/SenseCAP_Indicator_ESP32).
+the structure is like this:
+```bash
+├── components
+│   ├── assistant_indicator
+│   │   ├── CMakeLists.txt
+│   │   ├── include
+│   │   │   ├── assistant_indicator.h
+│   │   │   ├── assistant_indicator_config.h
+├── main
+│   ├── controller
+│   ├── model
+│   ├── ui
+│   ├── util
+│   ├── view
+│   ├── config.h
+│   ├── Kconfig.projbuild
+│   ├── main.c
+│   ├── CMakeLists.txt
+├── CMakeLists.txt
+├── partitions.csv
+├── sdkconfig
+├── sdkconfig.defaults
 ```
 
-Note: The color order could be different according to the LED model.
+### Possible errors
+Q: `spi_timing_config.h:174:1: error: static assertion failed: "FLASH and PSRAM Mode configuration are not supported"   174 | _Static_assert(CHECK_POWER_OF_2(SPI_TIMING_CORE_CLOCK_MHZ / SPI_TIMING_PSRAM_MODULE_CLOCK), "FLASH and PSRAM Mode configuration are not supported");`
+A:
+IDF Patch, refer to [details](https://github.com/Seeed-Solution/sensecap_indicator_esp32/blob/main/examples/factory/README.md)
+if your idf-version is v5.x version, just patch the idf, which is 'idf_psram_120m.patch' inclued in this repo.
+```bash
+# go to the idf path (which is the root path of the idf, git repo)
+git apply <this_project_path>/idf_psram_120m.patch
+```
 
-The pixel number indicates the pixel position in the LED strip. For a single LED, use 0.
+## Features
 
-## Troubleshooting
+List the main features and use cases of the project.
+- OpenAI
+- DELL
 
-* If the LED isn't blinking, check the GPIO or the LED type selection in the `Example Configuration` menu.
+## Examples
 
-For any technical queries, please open an [issue](https://github.com/espressif/esp-idf/issues) on GitHub. We will get back to you soon.
+Provide an example of how to use the project and the output.
+
+## Development and Contribution
+
+Instructions on how to contribute to the project.
+
+### Development
+
+How to set up a development environment and run tests.
+
+```
+$ npm install
+$ npm test
+```
+
+### Contribution
+
+How to contribute to the project and submit code changes.
+
+1. Fork the project
+2. Create a new branch (`git checkout -b feature/fooBar`)
+3. Commit your changes (`git commit -am 'Add some fooBar'`)
+4. Push to the branch (`git push origin feature/fooBar`)
+5. Create a new Pull Request
+
+## License
+
+The license information for the project.
+
+---
+
+You can modify and expand the above template according to your project needs. Please note that the README is an important part of your project, as it can help users understand and use your project better, so please write your README file as detailed and clear as possible.
