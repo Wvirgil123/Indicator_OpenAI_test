@@ -9,11 +9,11 @@
 int terminal_model_init(void)
 {
     terminal_storage_init();
-    terminal_sensor_init();
+    // terminal_sensor_init();
     terminal_wifi_init();
-    terminal_time_init();
-    terminal_city_init();
+    // terminal_time_init();
+    // terminal_city_init();
     terminal_display_init();  // lcd bl on
     terminal_btn_init();
-    // terminal_openai_init(); // a new task for openai
+    terminal_openai_init(); // a new task for openai
 }

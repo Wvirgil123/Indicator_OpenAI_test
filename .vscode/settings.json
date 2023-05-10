@@ -20,7 +20,25 @@
         "random": "cpp",
         "functional": "cpp",
         "ui_helpers.h": "c",
-        "numbers": "cpp"
+        "numbers": "cpp",
+        "bsp_btn.h": "c",
+        "terminal_display.h": "c",
+        "nvs_flash.h": "c",
+        "nvs.h": "c",
+        "dns.h": "c",
+        "err.h": "c",
+        "ssl.h": "c",
+        "platform.h": "c",
+        "esp_crt_bundle.h": "c",
+        "sockets.h": "c",
+        "chrono": "c",
+        "limits": "c",
+        "semaphore": "c",
+        "system_error": "c",
+        "cstring": "c",
+        "terminal_view.h": "c",
+        "view_data.h": "c"
     },
-    "idf.flashType": "UART"
+    "idf.flashType": "UART",
+    "cmake.configureOnOpen": false
 }

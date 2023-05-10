@@ -11,7 +11,7 @@ extern "C" {
 #endif
 
     #include "lvgl/lvgl.h"
-
+extern lv_obj_t *ui_screen_last;
 void up_Animation( lv_obj_t *TargetObject, int delay);
 void ui_event_screen_time( lv_event_t * e);
 extern lv_obj_t *ui_screen_time;
@@ -151,21 +151,21 @@ extern lv_chart_series_t * ui_sensor_chart_day_series;
 extern lv_obj_t * ui_sensor_chart_week;
 extern lv_chart_series_t * ui_sensor_chart_week_series_hight;
 extern lv_chart_series_t * ui_sensor_chart_week_series_low;
-
-extern lv_obj_t *ui_OpenAI;
+/* OPENAI */
+extern lv_obj_t *ui_screen_OpenAI; 
 void ui_event_wifi__st_button_4( lv_event_t * e);
 extern lv_obj_t *ui_wifi__st_button_4;
 // extern lv_obj_t *ui_wifi_st_7;
 extern lv_obj_t *ui_log_OpenAI;
-void ui_event_btn_go_chatgpt( lv_event_t * e);
+// void ui_event_btn_go_chatgpt( lv_event_t * e);
 extern lv_obj_t *ui_btn_go_chatgpt;
 extern lv_obj_t *ui_Label1;
 extern lv_obj_t *ui_btn_set_key;
 extern lv_obj_t *ui_Label4;
-void ui_event_btn_go_dalle( lv_event_t * e);
+extern void ui_event_btn_go_dalle( lv_event_t * e);
 extern lv_obj_t *ui_btn_go_dalle;
 extern lv_obj_t *ui_Label3;
-extern lv_obj_t *ui_ChatGPT;
+extern lv_obj_t *ui_screen_chatgpt;
 void ui_event_wifi__st_button_5( lv_event_t * e);
 extern lv_obj_t *ui_wifi__st_button_5;
 extern lv_obj_t *ui_wifi_st_8;
@@ -176,7 +176,7 @@ extern lv_obj_t *ui_back4;
 void ui_event_text_edit_gpt_request( lv_event_t * e);
 extern lv_obj_t *ui_text_edit_gpt_request;
 extern lv_obj_t *ui_Keyboard_chatgpt;
-extern lv_obj_t *ui_ChatGPT2;
+extern lv_obj_t *ui_screen_chatgpt2;
 void ui_event_wifi__st_button_7( lv_event_t * e);
 extern lv_obj_t *ui_wifi__st_button_7;
 extern lv_obj_t *ui_wifi_st_10;

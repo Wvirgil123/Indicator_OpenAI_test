@@ -474,9 +474,9 @@ static void __sensor_history_data_update_callback(void* arg)
 
     int cur_hour = timeinfo.tm_hour;
     int cur_day  = timeinfo.tm_mday;
-
+    #if SENSOR_HISTORY_DATA_DEBUG
     ESP_LOGI(TAG, "__sensor_history_data_update_callback: %s", strftime_buf);
-
+    #endif
     //if greater than 2020 year mean time is right 
     if( timeinfo.tm_year  < 120) { 
         ESP_LOGI(TAG, "The time is not right!!!");

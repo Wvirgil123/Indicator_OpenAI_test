@@ -102,6 +102,26 @@ struct view_data_sensor_data
     float  vaule;
 };
 
+/********* OpenAI ************/
+struct view_data_openai_show
+{
+    char question[256];
+    char *p_answer;
+};
+
+struct view_data_openai_request 
+{
+    char question[256];
+};
+
+struct view_data_openai_response
+{
+    bool  ret;  //0: fail, 1: successful
+    char  err_msg[54];
+    char  *p_answer;   // buf addr
+};
+/****** END of OpenAI **********/
+
 struct view_data_sensor_history_data
 {
     enum sensor_data_type sensor_type;
@@ -115,6 +135,7 @@ struct view_data_sensor_history_data
     float week_min;
     float week_max;
 };
+
 
 enum {
     VIEW_EVENT_SCREEN_START = 0,  // uint8_t, enum start_screen, which screen when start
@@ -160,6 +181,14 @@ enum {
     VIEW_EVENT_SHUTDOWN,      //NULL
     VIEW_EVENT_FACTORY_RESET, //NULL
     VIEW_EVENT_SCREEN_CTRL,   // bool  0:disable , 1:enable
+
+    VIEW_EVENT_OPENAI_ST, // bool 0: disable, 1: enable
+    VIEW_EVENT_CHATGPT_VIEW, // OPENAI
+    VIEW_EVENT_CHATGPT_REQUEST,
+
+    VIEW_BAR_MIN,
+    VIEW_BAR_MID,
+    VIEW_BAR_MAX,
 
     VIEW_EVENT_ALL,
 };

@@ -22,8 +22,7 @@
 
 #define MAX_HTTP_OUTPUT_BUFFER 4096
 
-#define DISPLAY_CFG_STORAGE  "city"
-
+#define DISPLAY_CFG_STORAGE "city"
 
 struct terminal_city
 {
@@ -31,16 +30,15 @@ struct terminal_city
     char ip[32];
     char city[32];
     char timezone[64];
-    int  local_utc_offset;
+    int local_utc_offset;
     // char country[32];
-
 };
 
 static const char *TAG = "city";
 
 static struct terminal_city __g_city_model;
 
-static SemaphoreHandle_t   __g_http_com_sem;
+static SemaphoreHandle_t __g_http_com_sem;
 
 static bool net_flag = false;
 
@@ -48,42 +46,48 @@ static char local_response_buffer[MAX_HTTP_OUTPUT_BUFFER] = {0};
 
 static int __city_data_prase(const char *p_str)
 {
-    //prase
+    // prase
     int ret = 0;
 
     cJSON *root = NULL;
-    cJSON* cjson_item = NULL;
+    cJSON *cjson_item = NULL;
 
     root = cJSON_Parse(p_str);
-    if( root == NULL ) {
+    if (root == NULL)
+    {
         return -1;
     }
-   
+
     cjson_item = cJSON_GetObjectItem(root, "status");
-    if( cjson_item != NULL  && cjson_item->valuestring != NULL) {
-        if( strcmp(cjson_item->valuestring, "success") != 0 ) {
+    if (cjson_item != NULL && cjson_item->valuestring != NULL)
+    {
+        if (strcmp(cjson_item->valuestring, "success") != 0)
+        {
             ret = -2;
             goto prase_end;
         }
     }
     cjson_item = cJSON_GetObjectItem(root, "city");
-    if( cjson_item != NULL  && cjson_item->valuestring != NULL) {
-        strncpy(__g_city_model.city, cjson_item->valuestring, sizeof(__g_city_model.city)-1);
+    if (cjson_item != NULL && cjson_item->valuestring != NULL)
+    {
+        strncpy(__g_city_model.city, cjson_item->valuestring, sizeof(__g_city_model.city) - 1);
     }
 
     cjson_item = cJSON_GetObjectItem(root, "query");
-    if( cjson_item != NULL  && cjson_item->valuestring != NULL) {
-        strncpy(__g_city_model.ip, cjson_item->valuestring, sizeof(__g_city_model.ip)-1);
+    if (cjson_item != NULL && cjson_item->valuestring != NULL)
+    {
+        strncpy(__g_city_model.ip, cjson_item->valuestring, sizeof(__g_city_model.ip) - 1);
     }
 
     cjson_item = cJSON_GetObjectItem(root, "timezone");
-    if( cjson_item != NULL  && cjson_item->valuestring != NULL) {
-        strncpy(__g_city_model.timezone,  cjson_item->valuestring, sizeof(__g_city_model.timezone)-1);
+    if (cjson_item != NULL && cjson_item->valuestring != NULL)
+    {
+        strncpy(__g_city_model.timezone, cjson_item->valuestring, sizeof(__g_city_model.timezone) - 1);
     }
 prase_end:
 
     cJSON_Delete(root);
-    
+
     return ret;
 }
 
@@ -194,9 +198,9 @@ static int __city_get(void)
 #define WEB_PATH "/json"
 
 static const char *REQUEST = "GET " WEB_PATH " HTTP/1.0\r\n"
-    "Host: "WEB_SERVER":"WEB_PORT"\r\n"
-    "User-Agent: esp-idf/1.0 esp32\r\n"
-    "\r\n";
+                             "Host: " WEB_SERVER ":" WEB_PORT "\r\n"
+                             "User-Agent: esp-idf/1.0 esp32\r\n"
+                             "\r\n";
 
 static int __city_get(void)
 {
@@ -207,15 +211,18 @@ static int __city_get(void)
     struct addrinfo *res;
     struct in_addr *addr;
     int s, r;
-    int retry=0;
-    while(net_flag) {
-        if( retry > 5) {
+    int retry = 0;
+    while (net_flag)
+    {
+        if (retry > 5)
+        {
             return -1;
         }
         retry++;
         int err = getaddrinfo(WEB_SERVER, WEB_PORT, &hints, &res);
 
-        if(err != 0 || res == NULL) {
+        if (err != 0 || res == NULL)
+        {
             ESP_LOGE(TAG, "DNS lookup failed err=%d res=%p", err, res);
             vTaskDelay(1000 / portTICK_PERIOD_MS);
             continue;
@@ -228,7 +235,8 @@ static int __city_get(void)
         ESP_LOGI(TAG, "DNS lookup succeeded. IP=%s", inet_ntoa(*addr));
 
         s = socket(res->ai_family, res->ai_socktype, 0);
-        if(s < 0) {
+        if (s < 0)
+        {
             ESP_LOGE(TAG, "... Failed to allocate socket.");
             freeaddrinfo(res);
             vTaskDelay(1000 / portTICK_PERIOD_MS);
@@ -236,7 +244,8 @@ static int __city_get(void)
         }
         ESP_LOGI(TAG, "... allocated socket");
 
-        if(connect(s, res->ai_addr, res->ai_addrlen) != 0) {
+        if (connect(s, res->ai_addr, res->ai_addrlen) != 0)
+        {
             ESP_LOGE(TAG, "... socket connect failed errno=%d", errno);
             close(s);
             freeaddrinfo(res);
@@ -247,7 +256,8 @@ static int __city_get(void)
         ESP_LOGI(TAG, "... connected");
         freeaddrinfo(res);
 
-        if (write(s, REQUEST, strlen(REQUEST)) < 0) {
+        if (write(s, REQUEST, strlen(REQUEST)) < 0)
+        {
             ESP_LOGE(TAG, "... socket send failed");
             close(s);
             vTaskDelay(4000 / portTICK_PERIOD_MS);
@@ -259,7 +269,8 @@ static int __city_get(void)
         receiving_timeout.tv_sec = 5;
         receiving_timeout.tv_usec = 0;
         if (setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, &receiving_timeout,
-                sizeof(receiving_timeout)) < 0) {
+                       sizeof(receiving_timeout)) < 0)
+        {
             ESP_LOGE(TAG, "... failed to set socket receiving timeout");
             close(s);
             vTaskDelay(4000 / portTICK_PERIOD_MS);
@@ -271,97 +282,113 @@ static int __city_get(void)
         int recv_len = 0;
         bzero(local_response_buffer, sizeof(local_response_buffer));
 
-        do {
-            r = read(s, local_response_buffer + recv_len, sizeof(local_response_buffer)-1-recv_len);
+        do
+        {
+            r = read(s, local_response_buffer + recv_len, sizeof(local_response_buffer) - 1 - recv_len);
             recv_len += r;
-            for(int i = 0; i < r; i++) {
-                putchar(local_response_buffer[i+recv_len]);
+            for (int i = 0; i < r; i++)
+            {
+                putchar(local_response_buffer[i + recv_len]);
             }
-        } while(r > 0);
+        } while (r > 0);
 
         ESP_LOGI(TAG, "... done reading from socket. Last read return=%d errno=%d.", r, errno);
         close(s);
 
-        if( recv_len > 0) {
+        if (recv_len > 0)
+        {
             char *p_json = strstr(local_response_buffer, "\r\n\r\n");
-            if( p_json ) {
-                p_json =  p_json + 4;
+            if (p_json)
+            {
+                p_json = p_json + 4;
                 return __city_data_prase(p_json);
-            } else {
+            }
+            else
+            {
                 return -1;
             }
         }
-
     }
 }
 
 #endif
 
 /* ---------------------------------------------------------- */
-//  time zone 
+//  time zone
 /* ---------------------------------------------------------- */
 
 static int __time_zone_data_prase(const char *p_str)
 {
-    //prase
+    // prase
     int ret = 0;
 
     cJSON *root = NULL;
-    cJSON* cjson_item = NULL;
-    cJSON* cjson_item_child = NULL;
+    cJSON *cjson_item = NULL;
+    cJSON *cjson_item_child = NULL;
 
     root = cJSON_Parse(p_str);
-    if( root == NULL ) {
+    if (root == NULL)
+    {
         ESP_LOGI(TAG, "cJSON_Parse err");
         return -1;
     }
-   
+
     cjson_item = cJSON_GetObjectItem(root, "currentUtcOffset");
-    if( cjson_item != NULL ) {
+    if (cjson_item != NULL)
+    {
         cjson_item_child = cJSON_GetObjectItem(cjson_item, "seconds");
-        if( cjson_item_child != NULL) {
+        if (cjson_item_child != NULL)
+        {
             __g_city_model.local_utc_offset = cjson_item_child->valueint;
-            ESP_LOGI(TAG, "local_utc_offset:%ds", cjson_item_child->valueint );
+            ESP_LOGI(TAG, "local_utc_offset:%ds", cjson_item_child->valueint);
         }
     }
 
-    //todo 
+    // todo
 prase_end:
     cJSON_Delete(root);
-    
+
     return ret;
 }
 
 #if 1
 extern const char timeapi_root_cert_pem_start[] asm("_binary_timeapi_cert_pem_start");
-extern const char timeapi_root_cert_pem_end[]   asm("_binary_timeapi_cert_pem_end");
+extern const char timeapi_root_cert_pem_end[] asm("_binary_timeapi_cert_pem_end");
 
 static int https_get_request(esp_tls_cfg_t cfg, const char *WEB_SERVER_URL, const char *REQUEST)
 {
     int ret, len;
     int recv_len = 0;
     esp_tls_t *tls = esp_tls_init();
-    if (!tls) {
+    if (!tls)
+    {
         ESP_LOGE(TAG, "Failed to allocate esp_tls handle!");
         goto exit;
     }
 
-    if (esp_tls_conn_http_new_sync(WEB_SERVER_URL, &cfg, tls) == 1) {
+    if (esp_tls_conn_http_new_sync(WEB_SERVER_URL, &cfg, tls) == 1)
+    {
         ESP_LOGI(TAG, "Connection established...");
-    } else {
+    }
+    else
+    {
         ESP_LOGE(TAG, "Connection failed...");
         goto cleanup;
     }
 
     size_t written_bytes = 0;
-    do {
+    do
+    {
         ret = esp_tls_conn_write(tls,
                                  REQUEST + written_bytes,
                                  strlen(REQUEST) - written_bytes);
-        if (ret >= 0) {
+        if (ret >= 0)
+        {
             ESP_LOGI(TAG, "%d bytes written", ret);
             written_bytes += ret;
-        } else if (ret != ESP_TLS_ERR_SSL_WANT_READ  && ret != ESP_TLS_ERR_SSL_WANT_WRITE) {
+        }
+        else if (ret != ESP_TLS_ERR_SSL_WANT_READ && ret != ESP_TLS_ERR_SSL_WANT_WRITE)
+        {
             ESP_LOGE(TAG, "esp_tls_conn_write  returned: [0x%02X](%s)", ret, esp_err_to_name(ret));
             goto cleanup;
         }
@@ -370,30 +397,37 @@ static int https_get_request(esp_tls_cfg_t cfg, const char *WEB_SERVER_URL, cons
     ESP_LOGI(TAG, "Reading HTTP response...");
     memset(local_response_buffer, 0x00, sizeof(local_response_buffer));
     recv_len = 0;
-    do {
+    do
+    {
         len = sizeof(local_response_buffer) - recv_len - 1;
-       
+
         ret = esp_tls_conn_read(tls, (char *)local_response_buffer + recv_len, len);
 
-        if (ret == ESP_TLS_ERR_SSL_WANT_WRITE  || ret == ESP_TLS_ERR_SSL_WANT_READ) {
+        if (ret == ESP_TLS_ERR_SSL_WANT_WRITE || ret == ESP_TLS_ERR_SSL_WANT_READ)
+        {
             continue;
-        } else if (ret < 0) {
+        }
+        else if (ret < 0)
+        {
             recv_len = 0;
             ESP_LOGE(TAG, "esp_tls_conn_read  returned [-0x%02X](%s)", -ret, esp_err_to_name(ret));
             break;
-        } else if (ret == 0) {
+        }
+        else if (ret == 0)
+        {
             ESP_LOGI(TAG, "connection closed");
             break;
         }
         recv_len += ret;
-        
-        break; //todo Let's say I can receive it all at once
+
+        break; // todo Let's say I can receive it all at once
     } while (1);
 
-    if( recv_len > 0 ) {
-        printf( "%s", local_response_buffer);
+    if (recv_len > 0)
+    {
+        printf("%s", local_response_buffer);
     }
-    
+
 cleanup:
     esp_tls_conn_destroy(tls);
 exit:
@@ -403,22 +437,26 @@ exit:
 static int __ip_get(char *ip, int buf_len)
 {
     esp_tls_cfg_t cfg = {
-        .cacert_buf = (const unsigned char *) timeapi_root_cert_pem_start,
+        .cacert_buf = (const unsigned char *)timeapi_root_cert_pem_start,
         .cacert_bytes = timeapi_root_cert_pem_end - timeapi_root_cert_pem_start,
     };
     char ip_url[128] = {0};
     char ip_request[200] = {0};
     int len;
-    snprintf(ip_url, sizeof(ip_url),"https://api.ipify.org");
-    snprintf(ip_request, sizeof(ip_request),"GET %s HTTP/1.1\r\nHost: api.ipify.org\r\nUser-Agent: sensecap\r\n\r\n", ip_url);
+    snprintf(ip_url, sizeof(ip_url), "https://api.ipify.org");
+    snprintf(ip_request, sizeof(ip_request), "GET %s HTTP/1.1\r\nHost: api.ipify.org\r\nUser-Agent: sensecap\r\n\r\n", ip_url);
 
     len = https_get_request(cfg, ip_url, ip_request);
-    if(len > 0) {
+    if (len > 0)
+    {
         char *p_ip = strstr(local_response_buffer, "\r\n\r\n");
-        if( p_ip ) {
-            strncpy(ip, p_ip+4, buf_len);
+        if (p_ip)
+        {
+            strncpy(ip, p_ip + 4, buf_len);
             return 0;
-        } else {
+        }
+        else
+        {
             return -1;
         }
     }
@@ -428,18 +466,19 @@ static int __ip_get(char *ip, int buf_len)
 static int __time_zone_get(char *ip)
 {
     esp_tls_cfg_t cfg = {
-        .cacert_buf = (const unsigned char *) timeapi_root_cert_pem_start,
+        .cacert_buf = (const unsigned char *)timeapi_root_cert_pem_start,
         .cacert_bytes = timeapi_root_cert_pem_end - timeapi_root_cert_pem_start,
     };
 
     char time_zone_url[128] = {0};
     char time_zone_request[200] = {0};
-    int len  = 0;
-    snprintf(time_zone_url, sizeof(time_zone_url),"https://www.timeapi.io/api/TimeZone/ip?ipAddress=%s",ip);
-    snprintf(time_zone_request, sizeof(time_zone_request),"GET %s HTTP/1.1\r\nHost: www.timeapi.io\r\nUser-Agent: sensecap\r\n\r\n", time_zone_url);
+    int len = 0;
+    snprintf(time_zone_url, sizeof(time_zone_url), "https://www.timeapi.io/api/TimeZone/ip?ipAddress=%s", ip);
+    snprintf(time_zone_request, sizeof(time_zone_request), "GET %s HTTP/1.1\r\nHost: www.timeapi.io\r\nUser-Agent: sensecap\r\n\r\n", time_zone_url);
 
     len = https_get_request(cfg, time_zone_url, time_zone_request);
-    if( len > 0) {
+    if (len > 0)
+    {
         // TIME ZONE RESPONSE: HTTP/1.1 200 OK
         // Server: nginx/1.18.0 (Ubuntu)
         // Date: Thu, 02 Feb 2023 09:40:26 GMT
@@ -451,20 +490,22 @@ static int __time_zone_get(char *ip)
         // {"timeZone":"UTC","currentLocalTime":"2023-02-02T09:40:26.1233729","currentUtcOffset":{"seconds":0,"milliseconds":0,"ticks":0,"nanoseconds":0},"standardUtcOffset":{"seconds":0,"milliseconds":0,"ticks":0,"nanoseconds":0},"hasDayLightSaving":false,"isDayLightSavingActive":false,"dstInterval":null}
         // 0
         char *p_json = strstr(local_response_buffer, "\r\n\r\n");
-        if( p_json ) {
-            p_json =  p_json + 4 + 3; //todo
+        if (p_json)
+        {
+            p_json = p_json + 4 + 3; // todo
             return __time_zone_data_prase(p_json);
-        } else {
+        }
+        else
+        {
             return -1;
         }
-       
     }
     return -1;
 }
 
 #else
 
-int https_mbedtls_request(const char *p_url, const char * port, const char *p_request, uint32_t request_len)
+int https_mbedtls_request(const char *p_url, const char *port, const char *p_request, uint32_t request_len)
 {
     int ret, flags, len;
 
@@ -483,8 +524,8 @@ int https_mbedtls_request(const char *p_url, const char * port, const char *p_re
     mbedtls_ssl_config_init(&conf);
 
     mbedtls_entropy_init(&entropy);
-    if((ret = mbedtls_ctr_drbg_seed(&ctr_drbg, mbedtls_entropy_func, &entropy,
-                                    NULL, 0)) != 0)
+    if ((ret = mbedtls_ctr_drbg_seed(&ctr_drbg, mbedtls_entropy_func, &entropy,
+                                     NULL, 0)) != 0)
     {
         ESP_LOGE(TAG, "mbedtls_ctr_drbg_seed returned %d", ret);
         abort();
@@ -492,7 +533,7 @@ int https_mbedtls_request(const char *p_url, const char * port, const char *p_re
     ESP_LOGI(TAG, "Attaching the certificate bundle...");
     ret = esp_crt_bundle_attach(&conf);
 
-    if(ret < 0)
+    if (ret < 0)
     {
         ESP_LOGE(TAG, "esp_crt_bundle_attach returned -0x%x\n\n", -ret);
         abort();
@@ -500,8 +541,8 @@ int https_mbedtls_request(const char *p_url, const char * port, const char *p_re
 
     ESP_LOGI(TAG, "Setting hostname for TLS session...");
 
-     /* Hostname set here should match CN in server certificate */
-    if((ret = mbedtls_ssl_set_hostname(&ssl, p_url)) != 0)
+    /* Hostname set here should match CN in server certificate */
+    if ((ret = mbedtls_ssl_set_hostname(&ssl, p_url)) != 0)
     {
         ESP_LOGE(TAG, "mbedtls_ssl_set_hostname returned -0x%x", -ret);
         abort();
@@ -509,10 +550,10 @@ int https_mbedtls_request(const char *p_url, const char * port, const char *p_re
 
     ESP_LOGI(TAG, "Setting up the SSL/TLS structure...");
 
-    if((ret = mbedtls_ssl_config_defaults(&conf,
-                                          MBEDTLS_SSL_IS_CLIENT,
-                                          MBEDTLS_SSL_TRANSPORT_STREAM,
-                                          MBEDTLS_SSL_PRESET_DEFAULT)) != 0)
+    if ((ret = mbedtls_ssl_config_defaults(&conf,
+                                           MBEDTLS_SSL_IS_CLIENT,
+                                           MBEDTLS_SSL_TRANSPORT_STREAM,
+                                           MBEDTLS_SSL_PRESET_DEFAULT)) != 0)
     {
         ESP_LOGE(TAG, "mbedtls_ssl_config_defaults returned %d", ret);
         goto exit;
@@ -526,7 +567,7 @@ int https_mbedtls_request(const char *p_url, const char * port, const char *p_re
     mbedtls_ssl_conf_authmode(&conf, MBEDTLS_SSL_VERIFY_OPTIONAL);
     mbedtls_ssl_conf_ca_chain(&conf, &cacert, NULL);
     mbedtls_ssl_conf_rng(&conf, mbedtls_ctr_drbg_random, &ctr_drbg);
-    //mbedtls_esp_enable_debug_log(&conf, 1);
+    // mbedtls_esp_enable_debug_log(&conf, 1);
 
 #ifdef CONFIG_MBEDTLS_SSL_PROTO_TLS1_3
     mbedtls_ssl_conf_min_version(&conf, MBEDTLS_SSL_MAJOR_VERSION_3, MBEDTLS_SSL_MINOR_VERSION_4);
@@ -539,13 +580,14 @@ int https_mbedtls_request(const char *p_url, const char * port, const char *p_re
         goto exit;
     }
 
-    while(1) {
+    while (1)
+    {
         mbedtls_net_init(&server_fd);
 
         ESP_LOGI(TAG, "Connecting to %s:%s...", p_url, port);
 
         if ((ret = mbedtls_net_connect(&server_fd, p_url,
-                                      port, MBEDTLS_NET_PROTO_TCP)) != 0)
+                                       port, MBEDTLS_NET_PROTO_TCP)) != 0)
         {
             ESP_LOGE(TAG, "mbedtls_net_connect returned -%x", -ret);
             goto exit;
@@ -556,7 +598,6 @@ int https_mbedtls_request(const char *p_url, const char * port, const char *p_re
         mbedtls_ssl_set_bio(&ssl, &server_fd, mbedtls_net_send, mbedtls_net_recv, NULL);
 
         ESP_LOGI(TAG, "Performing the SSL/TLS handshake...");
-
 
         while ((ret = mbedtls_ssl_handshake(&ssl)) != 0)
         {
@@ -577,7 +618,8 @@ int https_mbedtls_request(const char *p_url, const char * port, const char *p_re
             mbedtls_x509_crt_verify_info(local_response_buffer, sizeof(local_response_buffer), "  ! ", flags);
             ESP_LOGW(TAG, "verification info: %s", local_response_buffer);
         }
-        else {
+        else
+        {
             ESP_LOGI(TAG, "Certificate verified.");
         }
 
@@ -585,18 +627,22 @@ int https_mbedtls_request(const char *p_url, const char * port, const char *p_re
 
         ESP_LOGI(TAG, "Writing HTTP request...");
         size_t written_bytes = 0;
-        do {
+        do
+        {
             ret = mbedtls_ssl_write(&ssl,
                                     (const unsigned char *)p_request + written_bytes,
-                                    request_len- written_bytes);
-            if (ret >= 0) {
+                                    request_len - written_bytes);
+            if (ret >= 0)
+            {
                 ESP_LOGI(TAG, "%d bytes written", ret);
                 written_bytes += ret;
-            } else if (ret != MBEDTLS_ERR_SSL_WANT_WRITE && ret != MBEDTLS_ERR_SSL_WANT_READ) {
+            }
+            else if (ret != MBEDTLS_ERR_SSL_WANT_WRITE && ret != MBEDTLS_ERR_SSL_WANT_READ)
+            {
                 ESP_LOGE(TAG, "mbedtls_ssl_write returned -0x%x", -ret);
                 goto exit;
             }
-        } while(written_bytes < request_len);
+        } while (written_bytes < request_len);
 
         ESP_LOGI(TAG, "Reading HTTP response...");
         int recv_len = 0;
@@ -605,23 +651,24 @@ int https_mbedtls_request(const char *p_url, const char * port, const char *p_re
         do
         {
             len -= recv_len;
-            ret = mbedtls_ssl_read(&ssl, (unsigned char *)local_response_buffer+recv_len, len);
+            ret = mbedtls_ssl_read(&ssl, (unsigned char *)local_response_buffer + recv_len, len);
 
-            if(ret == MBEDTLS_ERR_SSL_WANT_READ || ret == MBEDTLS_ERR_SSL_WANT_WRITE)
+            if (ret == MBEDTLS_ERR_SSL_WANT_READ || ret == MBEDTLS_ERR_SSL_WANT_WRITE)
                 continue;
 
-            if(ret == MBEDTLS_ERR_SSL_PEER_CLOSE_NOTIFY) {
+            if (ret == MBEDTLS_ERR_SSL_PEER_CLOSE_NOTIFY)
+            {
                 ret = 0;
                 break;
             }
 
-            if(ret < 0)
+            if (ret < 0)
             {
                 ESP_LOGE(TAG, "mbedtls_ssl_read returned -0x%x", -ret);
                 break;
             }
 
-            if(ret == 0)
+            if (ret == 0)
             {
                 ESP_LOGI(TAG, "connection closed");
                 break;
@@ -629,12 +676,13 @@ int https_mbedtls_request(const char *p_url, const char * port, const char *p_re
 
             ESP_LOGD(TAG, "%d bytes read", ret);
             /* Print response directly to stdout as it is read */
-            for(int i = 0; i < ret; i++) {
-                putchar(local_response_buffer[i+recv_len]);
+            for (int i = 0; i < ret; i++)
+            {
+                putchar(local_response_buffer[i + recv_len]);
             }
             recv_len += ret;
 
-        } while(1);
+        } while (1);
 
         mbedtls_ssl_close_notify(&ssl);
 
@@ -642,7 +690,7 @@ int https_mbedtls_request(const char *p_url, const char * port, const char *p_re
         mbedtls_ssl_session_reset(&ssl);
         mbedtls_net_free(&server_fd);
 
-        if(ret != 0)
+        if (ret != 0)
         {
             mbedtls_strerror(ret, local_response_buffer, 100);
             ESP_LOGE(TAG, "Last error was: -0x%x - %s", -ret, local_response_buffer);
@@ -660,16 +708,20 @@ static int __ip_get(char *ip, int buf_len)
     char ip_url[128] = {0};
     char ip_request[200] = {0};
     int len;
-    snprintf(ip_url, sizeof(ip_url),"https://api.ipify.org");
-    len = snprintf(ip_request, sizeof(ip_request),"GET %s HTTP/1.0\r\nHost: api.ipify.org\r\nUser-Agent: esp-idf/1.0 esp32\r\n\r\n", ip_url);
+    snprintf(ip_url, sizeof(ip_url), "https://api.ipify.org");
+    len = snprintf(ip_request, sizeof(ip_request), "GET %s HTTP/1.0\r\nHost: api.ipify.org\r\nUser-Agent: esp-idf/1.0 esp32\r\n\r\n", ip_url);
 
     len = https_mbedtls_request("api.ipify.org", "443", ip_request, len);
-    if(len > 0) {
+    if (len > 0)
+    {
         char *p_ip = strstr(local_response_buffer, "\r\n\r\n");
-        if( p_ip ) {
-            strncpy(ip, p_ip+4, buf_len);
+        if (p_ip)
+        {
+            strncpy(ip, p_ip + 4, buf_len);
             return 0;
-        } else {
+        }
+        else
+        {
             return -1;
         }
     }
@@ -681,13 +733,14 @@ static int __time_zone_get(char *ip)
 
     char time_zone_url[128] = {0};
     char time_zone_request[200] = {0};
-    int len  = 0;
-    snprintf(time_zone_url, sizeof(time_zone_url),"https://www.timeapi.io/api/TimeZone/ip?ipAddress=%s",ip);
-    len = snprintf(time_zone_request, sizeof(time_zone_request),"GET %s HTTP/1.1\r\nHost: www.timeapi.io\r\nUser-Agent: sensecap\r\n\r\n", time_zone_url);
+    int len = 0;
+    snprintf(time_zone_url, sizeof(time_zone_url), "https://www.timeapi.io/api/TimeZone/ip?ipAddress=%s", ip);
+    len = snprintf(time_zone_request, sizeof(time_zone_request), "GET %s HTTP/1.1\r\nHost: www.timeapi.io\r\nUser-Agent: sensecap\r\n\r\n", time_zone_url);
 
     len = https_mbedtls_request("www.timeapi.io", "443", time_zone_request, len);
 
-    if( len > 0) {
+    if (len > 0)
+    {
         // TIME ZONE RESPONSE: HTTP/1.1 200 OK
         // Server: nginx/1.18.0 (Ubuntu)
         // Date: Thu, 02 Feb 2023 09:40:26 GMT
@@ -699,13 +752,15 @@ static int __time_zone_get(char *ip)
         // {"timeZone":"UTC","currentLocalTime":"2023-02-02T09:40:26.1233729","currentUtcOffset":{"seconds":0,"milliseconds":0,"ticks":0,"nanoseconds":0},"standardUtcOffset":{"seconds":0,"milliseconds":0,"ticks":0,"nanoseconds":0},"hasDayLightSaving":false,"isDayLightSavingActive":false,"dstInterval":null}
         // 0
         char *p_json = strstr(local_response_buffer, "\r\n\r\n");
-        if( p_json ) {
-            p_json =  p_json + 4 + 3; //todo
+        if (p_json)
+        {
+            p_json = p_json + 4 + 3; // todo
             return __time_zone_data_prase(p_json);
-        } else {
+        }
+        else
+        {
             return -1;
         }
-       
     }
     return -1;
 }
@@ -723,87 +778,101 @@ static void __terminal_http_task(void *p_arg)
 
     ESP_LOGI(TAG, "start Get city and time zone");
 
-    while(1) {
+    while (1)
+    {
 
-        if( net_flag  && !city_flag) {
-            
+        if (net_flag && !city_flag)
+        {
+
             err = __city_get();
-            if( err == 0) {
+            if (err == 0)
+            {
                 ESP_LOGI(TAG, "Get succesfully");
                 ESP_LOGI(TAG, "ip       : %s", __g_city_model.ip);
                 ESP_LOGI(TAG, "city     : %s", __g_city_model.city);
                 ESP_LOGI(TAG, "timezone : %s", __g_city_model.timezone);
                 city_flag = true;
-                ip_flag= true;
+                ip_flag = true;
                 esp_event_post_to(view_event_handle, VIEW_EVENT_BASE, VIEW_EVENT_CITY, &__g_city_model.city, sizeof(__g_city_model.city), portMAX_DELAY);
             }
         }
 
-        if( net_flag && !ip_flag ) {
+        if (net_flag && !ip_flag)
+        {
             ESP_LOGI(TAG, "Get ip...");
             err = __ip_get(__g_city_model.ip, sizeof(__g_city_model.ip));
-            if( err ==0 ) {
+            if (err == 0)
+            {
                 ESP_LOGI(TAG, "ip: %s", __g_city_model.ip);
-                ip_flag= true;
+                ip_flag = true;
             }
         }
-        if(  net_flag && ip_flag && !time_zone_flag) {
+        if (net_flag && ip_flag && !time_zone_flag)
+        {
             ESP_LOGI(TAG, "Get time zone...");
-            err =  __time_zone_get(__g_city_model.ip); 
-            if( err == 0) {
+            err = __time_zone_get(__g_city_model.ip);
+            if (err == 0)
+            {
                 char zone_str[32];
                 float zone = __g_city_model.local_utc_offset / 3600.0;
 
-                if( zone >= 0) {
+                if (zone >= 0)
+                {
                     snprintf(zone_str, sizeof(zone_str) - 1, "UTC-%.1f", zone);
-                } else {
+                }
+                else
+                {
                     snprintf(zone_str, sizeof(zone_str) - 1, "UTC+%.1f", 0 - zone);
                 }
-                terminal_time_net_zone_set( zone_str );
+                terminal_time_net_zone_set(zone_str);
 
                 time_zone_flag = true;
             }
         }
 
-        if( city_flag  && time_zone_flag) {
+        if (city_flag && time_zone_flag) // 当准确获取了信息之后，结束任务
+        {
             break;
         }
 
         vTaskDelay(pdMS_TO_TICKS(1000));
-        
     }
     vTaskDelete(NULL);
 }
 
-static void __view_event_handler(void* handler_args, esp_event_base_t base, int32_t id, void* event_data)
+static void __view_event_handler(void *handler_args, esp_event_base_t base, int32_t id, void *event_data)
 {
     switch (id)
     {
-        case VIEW_EVENT_WIFI_ST: {
-            ESP_LOGI(TAG, "event: VIEW_EVENT_WIFI_ST");
-            struct view_data_wifi_st *p_st = ( struct view_data_wifi_st *)event_data;
-            if( p_st->is_network) {
-                net_flag = true;
-                xSemaphoreGive(__g_http_com_sem); //right away  get city and time zone
-            } else {
-                net_flag = false;
-            }
-            break;
+    case VIEW_EVENT_WIFI_ST:
+    {
+        ESP_LOGI(TAG, "event: VIEW_EVENT_WIFI_ST");
+        struct view_data_wifi_st *p_st = (struct view_data_wifi_st *)event_data;
+        if (p_st->is_network)
+        {
+            net_flag = true;
+            // 信号量是在“空”状态下创建的，这意味着必须先用 xSemaphoreGive() API 函数给出信号量， 
+            // 然后才能使用 xSemaphoreTake() 函数来获取（获得）该信号量。
+            xSemaphoreGive(__g_http_com_sem); // right away  get city and time zone
         }
-        default:
-            break;
+        else
+        {
+            net_flag = false;
+        }
+        break;
+    }
+    default:
+        break;
     }
 }
 
 int terminal_city_init(void)
 {
     __g_http_com_sem = xSemaphoreCreateBinary();
-    
+
     xTaskCreate(&__terminal_http_task, "__terminal_http_task", 1024 * 5, NULL, 10, NULL);
 
-    ESP_ERROR_CHECK(esp_event_handler_instance_register_with(view_event_handle, 
-                                                        VIEW_EVENT_BASE, VIEW_EVENT_WIFI_ST, 
-                                                        __view_event_handler, NULL, NULL));                                                        
+    ESP_ERROR_CHECK(esp_event_handler_instance_register_with(view_event_handle,
+                                                             VIEW_EVENT_BASE, VIEW_EVENT_WIFI_ST,
+                                                             __view_event_handler, NULL, NULL));
 }
-
-

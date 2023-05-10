@@ -92,4 +92,3 @@ The license information for the project.
 
 ---
 
-You can modify and expand the above template according to your project needs. Please note that the README is an important part of your project, as it can help users understand and use your project better, so please write your README file as detailed and clear as possible.

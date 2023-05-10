@@ -136,10 +136,12 @@ static void __time_view_update_callback(void* arg)
         __time_cfg_get(&cfg);
         bool time_format_24 = cfg.time_format_24;
         esp_event_post_to(view_event_handle, VIEW_EVENT_BASE, VIEW_EVENT_TIME, &time_format_24, sizeof(time_format_24), portMAX_DELAY);
+        #if ENABLE_TIME_LOG
         ESP_LOGI(TAG, "need update time view");
         char strftime_buf[64];
         strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
         ESP_LOGI(TAG, "%s", strftime_buf);
+        #endif
     }
 }
 

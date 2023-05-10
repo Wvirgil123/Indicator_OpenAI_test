@@ -26,7 +26,7 @@ static void __btn_click_callback(void* arg)
         esp_restart();
         return;
     }
-    if( terminal_display_st_get()) {
+    if( terminal_display_st_get()) {// 按一次
         ESP_LOGI("btn", "click, off");
         terminal_display_off();
 

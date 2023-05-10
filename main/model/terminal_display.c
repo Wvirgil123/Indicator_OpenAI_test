@@ -250,7 +250,6 @@ static void __view_event_handler(void* handler_args, esp_event_base_t base, int3
             struct view_data_display * p_cfg = (struct view_data_display *)event_data;
             ESP_LOGI(TAG, "event: VIEW_EVENT_DISPLAY_CFG_APPLY");
             __display_cfg_print(p_cfg);
-
             __display_cfg_set(p_cfg);
             __display_cfg_save(p_cfg);
             __sleep_mode_restart(p_cfg->sleep_mode_en, p_cfg->sleep_mode_time_min);
